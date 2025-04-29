@@ -1,18 +1,17 @@
 <template>
-   <div class="flex flex-row min-h-screen w-full gap-10 justify-center items-center py-10">
+   <div class="flex flex-col min-h-screen w-full px-4 py-6 space-y-6">
 
-      <!-- Left Column: Logo + Login -->
-      <div class="flex flex-col items-center space-y-10 w-1/4">
+      <!-- Top Row: Logo and Login -->
+      <div class="flex justify-between items-center w-full">
          <img
              alt="FMCI logo"
-             class="max-w-full h-auto"
+             class="h-12 w-auto"
              src="./assets/fmci-logo-transparent.png"
          />
-
-         <div v-if="showLogin" class="flex flex-col items-center space-y-4 w-full">
+         <div v-if="showLogin" class="flex items-center space-x-4">
             <LoginButton @auth-changed="handleAuthChange" />
             <button
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition w-full"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
                 @click="hideLoginSection"
             >
                Hide Login Button
@@ -20,28 +19,29 @@
          </div>
       </div>
 
-      <!-- Center Column: Current Week -->
-      <div class="flex flex-col items-center w-1/4">
-         <CurrentWeekSchedule
-             v-if="isAuthenticated"
-             :isAuthenticated="isAuthenticated"
-             :accessToken="accessToken"
-             :events="currentWeekEvents"
-         />
-      </div>
-
-      <!-- Right Column: Next Week -->
-      <div class="flex flex-col items-center w-1/4">
-         <NextWeekSchedule
-             v-if="isAuthenticated"
-             :isAuthenticated="isAuthenticated"
-             :accessToken="accessToken"
-             :events="nextWeekEvents"
-         />
+      <!-- Bottom Row: Schedules -->
+      <div class="flex flex-row justify-center items-start w-full gap-10">
+         <div class="flex flex-col items-center w-3/8">
+            <CurrentWeekSchedule
+                v-if="isAuthenticated"
+                :isAuthenticated="isAuthenticated"
+                :accessToken="accessToken"
+                :events="currentWeekEvents"
+            />
+         </div>
+         <div class="flex flex-col items-center w-3/8">
+            <NextWeekSchedule
+                v-if="isAuthenticated"
+                :isAuthenticated="isAuthenticated"
+                :accessToken="accessToken"
+                :events="nextWeekEvents"
+            />
+         </div>
       </div>
 
    </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
