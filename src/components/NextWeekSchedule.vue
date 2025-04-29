@@ -45,10 +45,10 @@
 
 
 <script>
-import {ref, onMounted, onUnmounted, computed} from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 
 export default {
-   props: ["isAuthenticated", "events"],
+   props: ['isAuthenticated', 'events'],
    setup(props) {
       const scrollContainer = ref(null);
       let scrollInterval;
@@ -68,26 +68,31 @@ export default {
          return props.events.filter(event => {
             const eventDate = new Date(event.start.dateTime);
             const isWithinRange = eventDate >= nextMonday && eventDate <= nextFriday;
-            const isNotCancelled = event.isCancelled !== "true"; // <-- Important
+            const isNotCancelled = event.isCancelled !== 'true';
             return isWithinRange && isNotCancelled;
          });
       });
 
-      onMounted(() => {
-         console.log("next week events length: " + filteredEvents.value.length);
-         if (filteredEvents.value.length > 4) {
+      // ✅ Watch filteredEvents AFTER data loads
+      watch(filteredEvents, (events) => {
+         console.log('next week events length: ' + events.length);
+         if (events.length > 4 && scrollContainer.value) {
+            if (scrollInterval) clearInterval(scrollInterval);
+
             scrollInterval = setInterval(() => {
                if (scrollContainer.value) {
                   scrollContainer.value.scrollTop += 1;
 
-                  // Check if reached the bottom
-                  if (scrollContainer.value.scrollTop >= scrollContainer.value.scrollHeight - scrollContainer.value.clientHeight) {
-                     scrollContainer.value.scrollTop = 0; // Reset to top!
+                  if (
+                      scrollContainer.value.scrollTop >=
+                      scrollContainer.value.scrollHeight - scrollContainer.value.clientHeight
+                  ) {
+                     scrollContainer.value.scrollTop = 0;
                   }
                }
             }, 50);
          }
-      });
+      }, { immediate: true });
 
       onUnmounted(() => {
          clearInterval(scrollInterval);
@@ -101,19 +106,23 @@ export default {
          return nextMonday.toLocaleDateString('en-GB');
       };
 
-      const formatDate = (date) => new Date(date).toLocaleDateString('en-GB');
-      const formatTime = (date) => new Date(date).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+      const formatDate = (date) =>
+          new Date(date).toLocaleDateString('en-GB');
+
+      const formatTime = (date) =>
+          new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
       return {
          scrollContainer,
          filteredEvents,
          getNextMonday,
          formatDate,
-         formatTime
+         formatTime,
       };
    }
 };
 </script>
+
 
 <style scoped>
 </style>
