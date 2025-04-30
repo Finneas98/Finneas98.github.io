@@ -22,7 +22,7 @@ const msalConfig = {
   auth: {
     clientId: "c345bebf-7e3e-4b6d-8e4e-7d99bf4397af",
     authority: "https://login.microsoftonline.com/common/v2.0",
-    redirectUri: "https://finneas98.github.io"
+    redirectUri: "http://localhost:3000/"
   },
   cache: {
     cacheLocation: "sessionStorage",
