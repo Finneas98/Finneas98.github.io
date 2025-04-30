@@ -154,10 +154,16 @@ export default {
       };
 
       const formatDate = (date) =>
-          new Date(date).toLocaleDateString('en-GB');
+          new Date(date).toLocaleDateString('en-GB', { timeZone: 'Europe/Dublin' });
 
-      const formatTime = (date) =>
-          new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const formatTime = (dateString) => {
+         const date = new Date(dateString + 'Z'); // Add Z to make it UTC
+         return date.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Dublin',
+         });
+      };
 
       return {
          scrollContainer,

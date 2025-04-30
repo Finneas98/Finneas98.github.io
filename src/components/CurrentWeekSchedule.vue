@@ -66,7 +66,7 @@ export default {
    props: ['isAuthenticated', 'events'],
    methods: {
       isPastEvent(event) {
-         const eventEnd = new Date(event.end.dateTime);
+         const eventEnd = new Date(event.end.dateTime + 'Z');
          const now = new Date();
          return now > eventEnd;
       }
@@ -110,6 +110,10 @@ export default {
             }
 
             groups[dateKey].push(event);
+
+            console.log('Original:', event.start.dateTime);
+            console.log('Dublin time:', formatTime(event.start.dateTime));
+
          });
 
          // Sort events within each group by start time
@@ -166,10 +170,16 @@ export default {
       };
 
       const formatDate = (date) =>
-          new Date(date).toLocaleDateString('en-GB');
+          new Date(date).toLocaleDateString('en-GB', { timeZone: 'Europe/Dublin' });
 
-      const formatTime = (date) =>
-          new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const formatTime = (dateString) => {
+         const date = new Date(dateString + 'Z'); // Add Z to make it UTC
+         return date.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Dublin',
+         });
+      };
 
       return {
          scrollContainer,
