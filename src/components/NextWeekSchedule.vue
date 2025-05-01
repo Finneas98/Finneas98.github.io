@@ -1,14 +1,13 @@
 <template>
    <div
        v-if="isAuthenticated"
-       class="bg-orange-300 p-5 rounded-xl shadow-md max-w-[600px] w-full relative"
+       class="bg-orange-300 p-5 rounded-xl shadow-md max-w-[500px] w-full relative h-full"
    >
       <h2 class="text-2xl font-semibold text-gray-700 mb-2">Next Week’s Schedule</h2>
       <h3 class="text-lg font-medium text-gray-600 mb-4">Week Starting: {{ getNextMonday() }}</h3>
-
-      <div class="relative w-full h-full">
+      <div class="relative w-full">
          <div
-             v-if="Object.keys(groupedEvents).length"
+             v-if="Object.keys(groupedEvents).length > 0"
              ref="scrollContainer"
              class="overflow-hidden flex flex-col space-y-4 max-h-[600px]"
          >
@@ -21,7 +20,6 @@
                <div class="bg-orange-100 text-orange-800 font-semibold px-4 py-2 rounded">
                   {{ date }}
                </div>
-
                <!-- Events -->
                <div
                    v-for="event in events"
@@ -42,11 +40,13 @@
                </div>
             </div>
          </div>
-
-         <div v-else>
-            <p>No events this week.</p>
+         <div v-else class="flex flex-col items-center justify-center h-40 bg-blue-100 rounded-lg shadow-inner text-blue-800">
+            <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M9.75 17L3 10.25l1.5-1.5L9.75 14l10.5-10.5L21.75 5.25z" />
+            </svg>
+            <p class="text-lg font-medium">No events planned this week</p>
          </div>
-
          <!-- Fade-out overlay -->
          <div
              v-if="filteredEvents.length > 4"
@@ -80,7 +80,7 @@ export default {
          return props.events.filter(event => {
             const eventDate = new Date(event.start.dateTime);
             const isWithinRange = eventDate >= nextMonday && eventDate <= nextFriday;
-            const isNotCancelled = event.isCancelled !== 'true';
+            const isNotCancelled = event.isCancelled !== true;
             return isWithinRange && isNotCancelled;
          });
       });

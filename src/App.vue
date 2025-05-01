@@ -1,5 +1,5 @@
 <template>
-   <div class="flex flex-col min-h-screen w-full px-4 py-6 space-y-6">
+   <div class="flex flex-col min-h-screen w-full px-4 py-6 space-y-6 h-[743px]">
 
       <!-- Top Row: Logo and Login -->
       <div class="flex justify-between items-center w-full">
@@ -17,28 +17,25 @@
                Hide Login Button
             </button>
          </div>
+         <div v-else class="font-bold mr-3 text-2xl">
+            <h1> FMCI Events</h1>
+         </div>
       </div>
-
       <!-- Bottom Row: Schedules -->
-      <div class="flex flex-row justify-center items-start w-full gap-10">
-         <div class="flex flex-col items-center w-3/8">
-            <CurrentWeekSchedule
-                v-if="isAuthenticated"
-                :isAuthenticated="isAuthenticated"
-                :accessToken="accessToken"
-                :events="currentWeekEvents"
-            />
-         </div>
-         <div class="flex flex-col items-center w-3/8">
-            <NextWeekSchedule
-                v-if="isAuthenticated"
-                :isAuthenticated="isAuthenticated"
-                :accessToken="accessToken"
-                :events="nextWeekEvents"
-            />
-         </div>
+      <div class="flex flex-row justify-center items-start w-full gap-25 flex-1 h-full">
+         <CurrentWeekSchedule
+             v-if="isAuthenticated"
+             :isAuthenticated="isAuthenticated"
+             :accessToken="accessToken"
+             :events="currentWeekEvents"
+         />
+         <NextWeekSchedule
+             v-if="isAuthenticated"
+             :isAuthenticated="isAuthenticated"
+             :accessToken="accessToken"
+             :events="nextWeekEvents"
+         />
       </div>
-
    </div>
 </template>
 

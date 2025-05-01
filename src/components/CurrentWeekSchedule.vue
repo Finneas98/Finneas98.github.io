@@ -1,13 +1,14 @@
 <template>
-   <div v-if="isAuthenticated" class="bg-blue-300 p-5 rounded-xl shadow-md max-w-[600px] w-full relative">
+   <div
+       v-if="isAuthenticated"
+       class="bg-blue-300 p-5 rounded-xl shadow-md max-w-[500px] w-full relative h-full"
+   >
       <h2 class="text-2xl font-semibold text-gray-700 mb-2">This Week’s Schedule</h2>
       <h3 class="text-lg font-medium text-gray-600 mb-4">Week Starting: {{ getMonday() }}</h3>
-
-      <div class="relative w-full h-full">
-
+      <div class="relative w-full">
          <!-- Scrollable event container -->
          <div
-             v-if="groupedEvents"
+             v-if="Object.keys(groupedEvents).length > 0"
              ref="scrollContainer"
              class="overflow-hidden flex flex-col space-y-4 max-h-[600px]"
          >
@@ -20,14 +21,14 @@
                <div class="bg-blue-100 text-blue-800 font-semibold px-4 py-2 rounded">
                   {{ date }}
                </div>
-
                <!-- Events for the Day -->
                <div
                    v-for="event in events"
                    :key="event.id"
                    :class="[
                        'p-3 rounded-lg shadow w-full',
-                       isPastEvent(event) ? 'bg-gray-300 text-gray-500' : 'bg-gray-100'
+                       isPastEvent(event) ? 'bg-gray-300 text-gray-500' : 'bg-gray-100',
+                       isOngoingEvent(event) ? 'bg-green-300' : 'bg-gray-100'
                        ]"
                >
                   <strong class="text-lg text-gray-800">{{ event.subject }}</strong>
@@ -40,20 +41,18 @@
                </div>
             </div>
          </div>
-
-         <div
-             v-else
-             class=""
-         >
-            <p> No events this week. </p>
+         <div v-else class="flex flex-col items-center justify-center h-40 bg-blue-100 rounded-lg shadow-inner text-blue-800">
+            <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M9.75 17L3 10.25l1.5-1.5L9.75 14l10.5-10.5L21.75 5.25z" />
+            </svg>
+            <p class="text-lg font-medium">No events planned this week</p>
          </div>
-
          <!-- Fade-out overlay -->
          <div
              v-if="filteredEvents.length > 4"
              class="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-blue-100 to-transparent">
          </div>
-
       </div>
    </div>
 </template>
@@ -69,6 +68,12 @@ export default {
          const eventEnd = new Date(event.end.dateTime + 'Z');
          const now = new Date();
          return now > eventEnd;
+      },
+      isOngoingEvent(event) {
+         const eventEnd = new Date(event.end.dateTime + 'Z');
+         const eventStart = new Date(event.start.dateTime + 'Z');
+         const now = new Date();
+         return (now > eventStart) && (now < eventEnd);
       }
    },
    setup(props) {
@@ -89,7 +94,7 @@ export default {
          return props.events.filter(event => {
             const eventDate = new Date(event.start.dateTime);
             const isWithinRange = eventDate >= monday && eventDate <= friday;
-            const isNotCancelled = event.isCancelled !== 'true';
+            const isNotCancelled = event.isCancelled !== true;
             return isWithinRange && isNotCancelled;
          });
       });
@@ -110,10 +115,6 @@ export default {
             }
 
             groups[dateKey].push(event);
-
-            console.log('Original:', event.start.dateTime);
-            console.log('Dublin time:', formatTime(event.start.dateTime));
-
          });
 
          // Sort events within each group by start time
